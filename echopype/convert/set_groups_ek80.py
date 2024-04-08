@@ -170,9 +170,11 @@ class SetGroupsEK80(SetGroupsBase):
                 ),
                 "sound_velocity_profile_depth": (
                     ["sound_velocity_profile_depth"],
-                    self.parser_obj.environment["sound_velocity_profile"][::2]
-                    if "sound_velocity_profile" in self.parser_obj.environment
-                    else [],
+                    (
+                        self.parser_obj.environment["sound_velocity_profile"][::2]
+                        if "sound_velocity_profile" in self.parser_obj.environment
+                        else []
+                    ),
                     {
                         "standard_name": "depth",
                         "units": "m",
@@ -404,6 +406,17 @@ class SetGroupsEK80(SetGroupsBase):
                         "long_name": "Transducer frequency",
                         "valid_min": 0.0,
                         "standard_name": "sound_frequency",
+                    },
+                ),
+                "heading": (
+                    ["time2"],
+                    np.array(self.parser_obj.mru.get("heading", [np.nan])),
+                    {
+                        "long_name": "Platform heading (true)",
+                        "standard_name": "platform_orientation",
+                        "units": "degrees_north",
+                        "valid_min": 0.0,
+                        "valid_max": 360.0,
                     },
                 ),
             },
