@@ -392,21 +392,18 @@ class SimradNMEAParser(_SimradDatagramParser):
 
     The following methods are defined:
 
-        from_string(str):    parse a raw ER60 NMEA datagram
+        from_string(str):   parse a raw ER60 NMEA datagram
                             (with leading/trailing datagram size stripped)
 
-        to_string():         Returns the datagram as a raw string
-                             (including leading/trailing size fields)
-                             ready for writing to disk
+        to_string():        Returns the datagram as a raw string
+                            (including leading/trailing size fields)
+                            ready for writing to disk
     """
 
-    nmea_head_re = re.compile(r"\$[A-Za-z]{5},")  # noqa
+    nmea_head_re = re.compile("\$[A-Za-z]{5},")  # noqa
 
     def __init__(self):
-        headers = {
-            0: [("type", "4s"), ("low_date", "L"), ("high_date", "L")],
-            1: [("type", "4s"), ("low_date", "L"), ("high_date", "L"), ("port", "32s")],
-        }
+        headers = {0: [("type", "4s"), ("low_date", "L"), ("high_date", "L")]}
 
         _SimradDatagramParser.__init__(self, "NME", headers)
 
@@ -428,16 +425,18 @@ class SimradNMEAParser(_SimradDatagramParser):
         for indx, field in enumerate(self.header_fields(version)):
             data[field] = header_values[indx]
             if isinstance(data[field], bytes):
-                data[field] = data[field].decode()
+                #  first try to decode as utf-8 but fall back to latin_1 if that fails
+                try:
+                    data[field] = data[field].decode("utf-8")
+                except:
+                    data[field] = data[field].decode("latin_1")
 
         data["timestamp"] = nt_to_unix((data["low_date"], data["high_date"]))
+        data["timestamp"] = data["timestamp"].replace(tzinfo=None)
         data["bytes_read"] = bytes_read
 
-        # Remove trailing \x00 from the PORT field for NME1, rest of the datagram identical to NME0
-        if version == 1:
-            data["port"] = data["port"].strip("\x00")
+        if version == 0:
 
-        if version == 0 or version == 1:
             if sys.version_info.major > 2:
                 data["nmea_string"] = str(
                     raw_string[self.header_size(version) :].strip(b"\x00"),
@@ -446,9 +445,7 @@ class SimradNMEAParser(_SimradDatagramParser):
                 )
             else:
                 data["nmea_string"] = unicode(  # noqa
-                    raw_string[self.header_size(version) :].strip("\x00"),
-                    "ascii",
-                    errors="replace",
+                    raw_string[self.header_size(version) :].strip("\x00"), "ascii", errors="replace"
                 )
 
             if self.nmea_head_re.match(data["nmea_string"][:7]) is not None:
@@ -461,11 +458,15 @@ class SimradNMEAParser(_SimradDatagramParser):
         return data
 
     def _pack_contents(self, data, version):
+
         datagram_fmt = self.header_fmt(version)
         datagram_contents = []
 
         if version == 0:
+
             for field in self.header_fields(version):
+                if isinstance(data[field], str):
+                    data[field] = data[field].encode("latin_1")
                 datagram_contents.append(data[field])
 
             if data["nmea_string"][-1] != "\x00":
