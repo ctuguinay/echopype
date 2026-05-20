@@ -122,29 +122,26 @@ as part of the Schmidt Sciences Virtual Institute for Scientific Software (VISS)
   <tr>
     <td align="center" style="border: 0;">
       <a href="https://oceanexplorer.noaa.gov/news/oer-updates/2021/fy21-ffo-schedule.html" style="text-decoration:none;">
-        <img src="assets/logos/noaa.png" alt="NOAA" width="120">
+        <img src="docs/source/_static/logos/noaa.png" alt="NOAA" width="120">
       </a>
     </td>
     <td align="center" style="border: 0;">
       <a href="https://www.nsf.gov/awardsearch/showAward?AWD_ID=1849930&HistoricalAwards=false" style="text-decoration:none;">
-        <img src="assets/logos/nsf.png" alt="NSF" width="120">
+        <img src="docs/source/_static/logos/nsf.png" alt="NSF" width="120">
       </a>
     </td>
     <td align="center" style="border: 0;">
       <a href="https://escience.washington.edu/software-engineering/ssec/" style="text-decoration:none;">
-        <img src="assets/logos/ssec.png" alt="SSEC" width="120">
+        <img src="docs/source/_static/logos/ssec.png" alt="SSEC" width="120">
       </a>
     </td>
     <td align="center" style="border: 0;">
       <a href="https://voiceoftheocean.org/" style="text-decoration:none;">
-        <img src="assets/logos/voto.png" alt="VOTO Foundation" width="120">
+        <img src="docs/source/_static/logos/voto.png" alt="VOTO Foundation" width="120">
       </a>
     </td>
   </tr>
 </table>
-
-
-
 
 
 ## License
