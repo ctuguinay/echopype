@@ -56,8 +56,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/OSOceanAcoustics/echopype"
-Repository = "https://github.com/OSOceanAcoustics/echopype"
+Homepage = "https://github.com/echostack-org/echopype"
+Repository = "https://github.com/echostack-org/echopype"
 Documentation = "https://echopype.readthedocs.io"
 
 [project.optional-dependencies]

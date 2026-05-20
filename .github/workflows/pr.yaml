@@ -16,7 +16,7 @@ env:
   NUM_WORKERS: auto
   USE_POOCH: "True"
   ECHOPYPE_DATA_VERSION: v0.11.1a2
-  ECHOPYPE_DATA_BASEURL: https://github.com/OSOceanAcoustics/echopype/releases/download/{version}/
+  ECHOPYPE_DATA_BASEURL: https://github.com/echostack-org/echopype/releases/download/{version}/
   XDG_CACHE_HOME: ${{ github.workspace }}/.cache
 
 jobs:
