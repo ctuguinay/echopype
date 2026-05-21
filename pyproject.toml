@@ -71,7 +71,6 @@ test = [
     "pooch",
     "pytest",
     "pytest-cov",
-    "pytest-flake8",
     "pytest-mock",
     "pytest-xdist",
 ]
@@ -90,11 +89,6 @@ dev = [
     "black",
     "check-manifest",
     "codespell",
-    "flake8",
-    "flake8-builtins",
-    "flake8-comprehensions",
-    "flake8-mutable",
-    "flake8-print",
     "isort",
     "mypy",
     "pre-commit",
@@ -102,6 +96,7 @@ dev = [
     "setuptools_scm",
     "twine",
     "wheel",
+    "ruff",
 ]
 
 [tool.setuptools]
@@ -136,3 +131,21 @@ include_trailing_comma = true
 force_grid_wrap = 0
 combine_as_imports = true
 line_length = 100
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+extend-exclude = [
+    "*.ipynb",
+]
+
+[tool.ruff.lint]
+select = ["E", "F"]
+ignore = [
+    "E722",
+    "E203",
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["echopype"]
+combine-as-imports = true
