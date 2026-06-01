@@ -76,7 +76,7 @@ test = [
 ]
 
 docs = [
-    "jupyter-book<2.0",
+    "jupyter-book",
     "numpydoc",
     "sphinx",
     "sphinx-automodapi",
