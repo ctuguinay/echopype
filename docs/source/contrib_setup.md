@@ -31,7 +31,7 @@ To create an environment for developing Echopype, we recommend the following ste
 2. Create a conda environment using the conda-forge channel, and follow the steps below:
     ```shell
     # Create a conda environment
-    conda create -c conda-forge -n echopype --yes python=3.12
+    conda create -c conda-forge -n echopype_dev --yes python=3.12
 
     # Activate the environment
     conda activate echopype
