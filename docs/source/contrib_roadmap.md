@@ -33,7 +33,7 @@ Echopype currently support converting files from [a few echosounder models](conv
 ## Rule-based algorithms
 We plan to add more common rule-based (i.e. non-ML) echosounder data analysis algorithms into Echopype. The high priority items are:
 - Expanded support for broadband processing (in the `calibrate` subpackage)
-  - broadband Sv processing is currently supported
+  - broadband Sv processing is currently supported to compute band-averaged Sv from broadband data
   - ongoing development includes TS spectrum, Sv spectrum, and related broadband analysis workflows
 - Noise removal (in the `clean` subpackage)
   - currently `clean` contains a handful of noise removal functions from {cite:t}`Ryan2015`.
