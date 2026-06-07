@@ -348,7 +348,10 @@ def test_check_file_permissions_fsmap_writes_inside_target(tmp_path):
     check_file_permissions(fsspec.FSMap(str(target), fs))
 
     assert opened
-    assert all(os.path.dirname(p) == str(target) for p in opened)
+    # the probe path uses fsspec's forward-slash convention; normalize both
+    # sides so the parent-dir check is OS-independent (Windows uses os.sep '\\').
+    target_dir = str(target).replace(os.sep, '/')
+    assert all(p.replace(os.sep, '/').rsplit('/', 1)[0] == target_dir for p in opened)
     assert list(target.iterdir()) == []
 
 
