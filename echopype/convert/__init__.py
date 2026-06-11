@@ -9,7 +9,7 @@ The current version supports:
 - ASL Environmental Sciences AZFP (USL6) echosounder ``.azfp`` data
 """
 
-# flake8: noqa
+# ruff: noqa
 from .parse_ad2cp import ParseAd2cp
 from .parse_base import ParseBase
 from .parse_ek60 import ParseEK60
