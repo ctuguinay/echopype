@@ -358,7 +358,7 @@ def get_cal_params_AZFP(beam: xr.DataArray, vend: xr.DataArray, user_dict: dict)
             elif p == "Sv_offset" and p in vend:
                 out_dict[p] = vend[
                     p
-                ]  # Sv_offset may not be echodata, will be calculated in calibrateAZFP
+                ]  # Sv_offset may not be in echodata, will be calculated in calibrateAZFP
 
             # Params from Vendor_specific group
             elif p in ["EL", "DS", "TVR", "VTX0"]:
