@@ -107,7 +107,7 @@ def _calc_azfp_Sv_offset(
     # Check if outside of calibration grid
     if np.isnan(zq):
         raise ValueError(
-            f"Pulse lengths less than 150 or greater than 1000 usecs for {frequency}kHz "
+            f"Pulse lengths less than 150 or greater than 1000 usecs for {frequency}Hz "
             "are not supported. Set cal_params={'Sv_offset' : VALUES} "
             "to provide your own Sv_offset."
         )
@@ -154,7 +154,7 @@ class CalibrateAZFP(CalibrateBase):
                     Sv_offset.append(_calc_azfp_Sv_offset(freq, pulse_len * 1e6))
                 except ValueError:
                     logger.warning(
-                        f"The Sv for {freq}kHz and pulse length {pulse_len}us "
+                        f"The Sv for {freq}Hz and pulse length {pulse_len}us "
                         "is uncalibrated (Sv_offset=0.0)"
                     )
                     Sv_offset.append(0.0)

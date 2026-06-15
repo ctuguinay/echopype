@@ -156,7 +156,6 @@ def test_convert_azfp_01a_different_ranges(azfp_path):
     check_platform_required_scalar_vars(echodata)
 
 
-#@pytest.mark.skip(reason="required pulse length not in Sv offset dictionary")
 def test_convert_azfp_01a_no_temperature_pressure_tilt(azfp_path):
     """Test converting file with no valid temperature, pressure and tilt data."""
 

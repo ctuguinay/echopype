@@ -98,7 +98,7 @@ class ParseAZFP(ParseBase, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _parse_header(self, file):
+    def _parse_header(self, file, ping_num):
         """Parse header of raw data file."""
 
     @abc.abstractmethod
@@ -112,7 +112,7 @@ class ParseAZFP(ParseBase, abc.ABC):
         """Prints message to console giving information about the raw file being parsed."""
 
     @abc.abstractmethod
-    def _split_header(self, raw, header_unpacked):
+    def _split_header(self, raw, ping_num, header_unpacked):
         """Splits the header information into a dictionary.
         Modifies self.unpacked_data
 
@@ -131,14 +131,6 @@ class ParseAZFP(ParseBase, abc.ABC):
     def _add_counts(self, raw, ping_num, endian):
         """Unpacks the echosounder raw data. Modifies self.unpacked_data."""
         vv_tmp = [[]] * self.unpacked_data["num_chan"][ping_num]
-
-        # TODO: this is a bit hacky, convert the parameters to a numpy array and make a extra dim?
-        if self.unpacked_data["num_chan"][ping_num] == 1:
-            self.unpacked_data["num_bins"][ping_num] = [self.unpacked_data["num_bins"][ping_num]]
-            self.unpacked_data["data_type"][ping_num] = [self.unpacked_data["data_type"][ping_num]]
-            self.unpacked_data["range_samples_per_bin"][ping_num] = [
-                self.unpacked_data["range_samples_per_bin"][ping_num]
-            ]
 
         for freq_ch in range(self.unpacked_data["num_chan"][ping_num]):
             counts_byte_size = self.unpacked_data["num_bins"][ping_num][freq_ch]

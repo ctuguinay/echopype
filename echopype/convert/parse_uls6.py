@@ -214,7 +214,7 @@ class ParseULS6(ParseAZFP):
         for phase in range(self.parameters["num_phases"]):
             self.parameters[f"gain_phase{phase + 1}"] = [1] * self.parameters["num_freq"]
 
-    def _parse_header(self, file):
+    def _parse_header(self, file, ping_num):
         """Reads the first bytes of the header to get the header flag and number of data bytes
             Calls _split_header where the header block is parsed.
 
@@ -237,7 +237,7 @@ class ParseULS6(ParseAZFP):
         if header_flag == self.DATA_START_FLAG:
             # Reading will stop if the file contains an unexpected flag
             self.unpacked_data["num_data_bytes"].append(num_data_bytes)
-            return self._split_header(file)
+            return self._split_header(file, ping_num)
 
         return False
 
@@ -277,7 +277,7 @@ class ParseULS6(ParseAZFP):
             ping_num = 0
             eof = False
             while not eof:
-                if self._parse_header(file):
+                if self._parse_header(file, ping_num):
                     # Appends the actual 'data values' to unpacked_data
                     self._add_counts(file, ping_num, endian="<")
 
@@ -448,7 +448,7 @@ class ParseULS6(ParseAZFP):
             byte_size = 1
         return field_no, byte_code, byte_size, array_size
 
-    def _split_header(self, raw):
+    def _split_header(self, raw, ping_num):
         """Splits the header information into a dictionary.
 
         Modifies self.unpacked_data
@@ -497,6 +497,14 @@ class ParseULS6(ParseAZFP):
                 )
             )
             return False
+
+        # TODO: this is a bit hacky, convert the parameters to a numpy array and make a extra dim?
+        if self.unpacked_data["num_chan"][ping_num] == 1:
+            self.unpacked_data["num_bins"][ping_num] = [self.unpacked_data["num_bins"][ping_num]]
+            self.unpacked_data["data_type"][ping_num] = [self.unpacked_data["data_type"][ping_num]]
+            self.unpacked_data["range_samples_per_bin"][ping_num] = [
+                self.unpacked_data["range_samples_per_bin"][ping_num]
+            ]
 
         return True
 

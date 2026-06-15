@@ -112,7 +112,7 @@ class ParseULS5(ParseAZFP):
         sonar_model="AZFP",
         **kwargs,
     ):
-        super().__init__(file, storage_options, storage_options, sonar_model)
+        super().__init__(file, file_meta, storage_options, sonar_model)
         # Parent class attributes
         #  regex pattern used to grab datetime embedded in filename
         self.xml_path = file_meta
@@ -171,13 +171,13 @@ class ParseULS5(ParseAZFP):
                     if new_key not in self.parameters.keys():
                         self.parameters[new_key] = v
 
-    def _parse_header(self, file):
+    def _parse_header(self, file, ping_num):
         header_chunk = file.read(self.HEADER_SIZE)
         if header_chunk:
             header_unpacked = unpack(self.HEADER_FORMAT, header_chunk)
 
             # Reading will stop if the file contains an unexpected flag
-            return self._split_header(file, header_unpacked)
+            return self._split_header(file, ping_num, header_unpacked)
         return False
 
     def parse_raw(self):
@@ -206,7 +206,7 @@ class ParseULS5(ParseAZFP):
             ping_num = 0
             eof = False
             while not eof:
-                if self._parse_header(file):
+                if self._parse_header(file, ping_num):
                     # Appends the actual 'data values' to unpacked_data
                     self._add_counts(file, ping_num, endian=">")
 
@@ -325,7 +325,7 @@ class ParseULS5(ParseAZFP):
         pathstr, xml_name = os.path.split(self.xml_path)
         logger.info(f"parsing file {filename} with {xml_name}, " f"time of first ping: {timestr}")
 
-    def _split_header(self, raw, header_unpacked):
+    def _split_header(self, raw, ping_num, header_unpacked):
         """Splits the header information into a dictionary.
         Modifies self.unpacked_data
 
@@ -378,6 +378,15 @@ class ParseULS5(ParseAZFP):
             else:
                 self.unpacked_data[field[0]].append(header_unpacked[header_byte_cnt])
                 header_byte_cnt += 1
+
+        # TODO: this is a bit hacky, convert the parameters to a numpy array and make a extra dim?
+        if self.unpacked_data["num_chan"][ping_num] == 1:
+            self.unpacked_data["num_bins"][ping_num] = [self.unpacked_data["num_bins"][ping_num]]
+            self.unpacked_data["data_type"][ping_num] = [self.unpacked_data["data_type"][ping_num]]
+            self.unpacked_data["range_samples_per_bin"][ping_num] = [
+                self.unpacked_data["range_samples_per_bin"][ping_num]
+            ]
+
         return True
 
     def _get_ping_time(self):
