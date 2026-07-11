@@ -55,14 +55,14 @@ def test_cal_params_intake_AZFP(azfp_path):
     assert_identical(ds_Sv["EL"], cal_params_manual["EL"])
     
     # Check passing Sv_offset values manually 
-    SV_ext = xr.DataArray([1., 2., 3., 4.], dims=["channel"], coords={"channel": chan}, name="Sv_offset")
+    Sv_ext = xr.DataArray([1., 2., 3., 4.], dims=["channel"], coords={"channel": chan}, name="Sv_offset")
     cal_params_manual = ep.calibrate.cal_params.get_cal_params_AZFP(
-        beam=ed["Sonar/Beam_group1"], vend=ed["Vendor_specific"], user_dict={"Sv_offset": SV_ext}
+        beam=ed["Sonar/Beam_group1"], vend=ed["Vendor_specific"], user_dict={"Sv_offset": Sv_ext}
     )
     cal_obj = ep.calibrate.calibrate_azfp.CalibrateAZFP(
-        echodata=ed, cal_params={"Sv_offset" : SV_ext}, env_params=env_ext
+        echodata=ed, cal_params={"Sv_offset" : Sv_ext}, env_params=env_ext
     )
-    ds_Sv = ep.calibrate.compute_Sv(ed, cal_params={"Sv_offset" : SV_ext}, env_params=env_ext)
+    ds_Sv = ep.calibrate.compute_Sv(ed, cal_params={"Sv_offset" : Sv_ext}, env_params=env_ext)
     assert_identical(ds_Sv["Sv_offset"], cal_params_manual["Sv_offset"])
     assert_identical(ds_Sv["Sv_offset"], cal_obj.cal_params["Sv_offset"])
 

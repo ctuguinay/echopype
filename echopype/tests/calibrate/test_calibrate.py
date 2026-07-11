@@ -232,9 +232,9 @@ def test_compute_Sv_offset_azfp(azfp_path):
     )
     
     chan = echodata["Sonar/Beam_group1"]["channel"]
-    SV_ext = xr.DataArray([0.4, 0.4, 0., 0.], dims=["channel"], coords={"channel": chan}, name="Sv_offset")
+    Sv_ext = xr.DataArray([0.4, 0.4, 0., 0.], dims=["channel"], coords={"channel": chan}, name="Sv_offset")
     ds_Sv = ep.calibrate.compute_Sv(echodata=echodata, env_params=env_params)
-    assert_identical(ds_Sv["Sv_offset"], SV_ext)
+    assert_identical(ds_Sv["Sv_offset"], Sv_ext)
 
 def test_compute_sv_azfp6_matlab(azfp6_path):
     azfp_asp_path = str(azfp6_path.joinpath('25040412_01A_2ping.azfp'))
