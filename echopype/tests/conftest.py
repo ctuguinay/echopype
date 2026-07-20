@@ -17,7 +17,7 @@ if os.getenv("USE_POOCH") == "True" and os.getenv("PYTEST_XDIST_WORKER") is None
     # Lock to the known-good assets release (can be overridden via env if needed)
     base = os.getenv(
         "ECHOPYPE_DATA_BASEURL",
-        "https://github.com/OSOceanAcoustics/echopype/releases/download/{version}/",
+        "https://github.com/echostack-org/echopype/releases/download/{version}/",
     )
     cache_dir = pooch.os_cache("echopype")
 
@@ -33,10 +33,11 @@ if os.getenv("USE_POOCH") == "True" and os.getenv("PYTEST_XDIST_WORKER") is None
     bundles = [
         "ad2cp.zip", "azfp.zip", "azfp6.zip", "ea640.zip", "ecs.zip", "ek60.zip",
         "ek60_calibrate_chunks.zip", "ek60_missing_channel_power.zip", "ek80.zip",
-        "ek80_bb_complex_multiplex.zip", "ek80_bb_with_calibration.zip",
+        "ek80_heading.zip", "ek80_bb_complex_multiplex.zip", "ek80_bb_with_calibration.zip",
         "ek80_duplicate_ping_times.zip", "ek80_ext.zip", "ek80_invalid_env_datagrams.zip",
         "ek80_missing_sound_velocity_profile.zip", "ek80_new.zip", "ek80_sequence.zip",
         "es60.zip", "es70.zip", "es80.zip", "legacy_datatree.zip", "resample_to_geometry_example_data.zip",
+        "ts_spectrum_example_data.zip",
     ]
 
     # v0.11.1a2 checksums (GitHub release assets)
@@ -57,12 +58,14 @@ if os.getenv("USE_POOCH") == "True" and os.getenv("PYTEST_XDIST_WORKER") is None
         "ek80_invalid_env_datagrams.zip": "sha256:dece27d90f30d1a13b56d99350c3254e81622af3199fda0112d3b9e1d7db270c",  # noqa: E501
         "ek80_missing_sound_velocity_profile.zip": "sha256:1635585026ae5c4ffdff09ca4d63aeff0b33471c5ee0e1b8a520f87469535852",  # noqa: E501
         "ek80_new.zip": "sha256:f799cde453762c46ad03fee178c76cd9fbb00eec92a5d1038c32f6a9479b2e57",
+        "ek80_heading.zip": "sha256:141b9a482af22483097de6f928db4d7b0494d4f7a153f88cffd24c070e11fadb",
         "ek80_sequence.zip": "sha256:9d8fac39dd31f587d55b9978ba4d2b52bbc85daa85d320ef2ac34b3ae947bb1f",  # noqa: E501
         "es60.zip": "sha256:a6c2a15c664ef8b6ac17cb36a28162c271fca361509cf43313038f1bdc9b6c7c",
         "es70.zip": "sha256:a6b4f27f33f09bace26264de6984fdb4111a3a0337bc350c3c1d25c8b3effc7c",
         "es80.zip": "sha256:b37ee01462f46efe055702c20be67d2b8c6b786844b183b16ffc249c7c5ec704",
         "legacy_datatree.zip": "sha256:820cd252047dbf35fa5fb04a9aafee7f7659e0fe4f7d421d69901c57deb6c9d5",  # noqa: E501
         "resample_to_geometry_example_data.zip": "sha256:1a45e3ac31ef16d742b16155dc4b7f62511abd8d25547f55fcd9146446f60d07",
+        "ts_spectrum_example_data.zip": "sha256:dae603937d05d0d0a5dd41c90b9eafa3c540c95e0f6b298ceeddc7f23d163f4b",
     }
 
     EP = pooch.create(
@@ -161,6 +164,7 @@ def test_path():
         "EK60_CAL_CHUNKS": TEST_DATA_FOLDER / "ek60_calibrate_chunks",
         "EK60_MISSING_CHANNEL_POWER": TEST_DATA_FOLDER / "ek60_missing_channel_power",
         "EK80": TEST_DATA_FOLDER / "ek80",
+        "EK80_HEADING": TEST_DATA_FOLDER / "ek80_heading",
         "EK80_NEW": TEST_DATA_FOLDER / "ek80_new",
         "ES60": TEST_DATA_FOLDER / "es60",
         "ES70": TEST_DATA_FOLDER / "es70",
@@ -179,6 +183,7 @@ def test_path():
         "ECS": TEST_DATA_FOLDER / "ecs",
         "LEGACY_DATATREE": TEST_DATA_FOLDER / "legacy_datatree",
         "RESAMPLE_GEOMETRY": TEST_DATA_FOLDER / "resample_to_geometry_example_data",
+        "TS_SPECTRUM_EXAMPLE": TEST_DATA_FOLDER / "ts_spectrum_example_data",
     }
 
 
