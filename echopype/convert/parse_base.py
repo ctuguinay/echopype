@@ -369,10 +369,18 @@ class ParseEK(ParseBase):
                 "ES70",
             ]:
                 # EK/ES60 and ES70 should have a CON0 datagram first
-                raise ValueError(f"Expected CON0 as the first datagram for {self.sonar_model}, but got {self.config_datagram["type"]}")            
-            elif self.config_datagram["type"] != "XML0" and self.sonar_model in ["EK80", "ES80", "EA640"]:
+                raise ValueError(
+                    f"Expected CON0 as the first datagram for {self.sonar_model}, but got {self.config_datagram["type"]}"
+                )
+            elif self.config_datagram["type"] != "XML0" and self.sonar_model in [
+                "EK80",
+                "ES80",
+                "EA640",
+            ]:
                 # ES80/EK80 file should have an XML0 datagram first
-                raise ValueError(f"Expected XML0 as the first datagram for {self.sonar_model}, but got {self.config_datagram["type"]}")
+                raise ValueError(
+                    f"Expected XML0 as the first datagram for {self.sonar_model}, but got {self.config_datagram["type"]}"
+                )
 
             self.config_datagram["timestamp"] = np.datetime64(
                 self.config_datagram["timestamp"].replace(tzinfo=None), "[ns]"
