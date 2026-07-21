@@ -27,7 +27,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]
         runs-on: [ubuntu-latest]
     steps:
       - name: Checkout repo
@@ -48,7 +48,7 @@ jobs:
         run: echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Install echopype with test dependencies
-        run: python -m pip install -e ".[test,plot]"
+        run: python -m pip install -e . --group test
 
       - name: Start memory monitor
         shell: bash
@@ -94,7 +94,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]
         runs-on: [ubuntu-latest]
         experimental: [false]
 
@@ -147,7 +147,7 @@ jobs:
         run: echo "PYTHON_VERSION=${{ matrix.python-version }}" >> $GITHUB_ENV
 
       - name: Install echopype with test dependencies
-        run: python -m pip install -e ".[test,plot]"
+        run: python -m pip install -e . --group test
 
       - name: Cache echopype test data
         uses: actions/cache@v6
@@ -241,7 +241,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v7
@@ -258,7 +258,7 @@ jobs:
 
       - name: Install echopype with test dependencies
         run: |
-          python -m pip install -e ".[test,plot]"
+          python -m pip install -e . --group test
 
       - name: Install error reporter
         if: ${{ matrix.python-version == '3.13' }}
@@ -313,7 +313,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.11", "3.12", "3.13"]
+        python-version: ["3.12", "3.13", "3.14"]
 
     steps:
       - uses: actions/checkout@v7
@@ -330,7 +330,7 @@ jobs:
 
       - name: Install echopype with test dependencies
         run: |
-          python -m pip install -e ".[test,plot]"
+          python -m pip install -e . --group test
           python -m pip install "pooch>=1.8" s3fs
 
       - name: Install error reporter
