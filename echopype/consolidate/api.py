@@ -551,10 +551,10 @@ def add_splitbeam_angle(
             # Add dictionary entry to keep/drop last hanning window's zero value
             pc_params["drop_last_hanning_zero"] = drop_last_hanning_zero
 
-            theta, phi = get_angle_complex_samples(ds_beam, angle_params, pc_params)
+            theta, phi = get_angle_complex_samples(ds_beam, angle_params, pc_params, dim_0=dim_0)
         else:  # without pulse compression
             # operation is identical with CW complex data
-            theta, phi = get_angle_complex_samples(ds_beam, angle_params)
+            theta, phi = get_angle_complex_samples(ds_beam, angle_params, dim_0=dim_0)
 
     # add theta and phi to source_Sv input
     theta.attrs["long_name"] = "split-beam alongship angle"

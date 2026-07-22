@@ -199,7 +199,10 @@ def get_angle_power_samples(
 
 
 def get_angle_complex_samples(
-    ds_beam: xr.Dataset, angle_params: dict, pc_params: dict = None
+    ds_beam: xr.Dataset,
+    angle_params: dict,
+    pc_params: dict = None,
+    dim_0: str = "channel",
 ) -> Tuple[xr.DataArray, xr.DataArray]:
     """
     Obtain split-beam angle from CW or BB mode complex samples.
@@ -214,7 +217,10 @@ def get_angle_complex_samples(
     pc_params : dict
         Parameters needed for pulse compression
         This dict also serves as a flag for whether to apply pulse compression
-
+    dim_0 : str
+        The name of the first dimension of the dataset, which can be either
+        "channel" or "frequency_nominal". This is used to select the appropriate
+        beam_type, angle_sensitivity, and angle_offset for each channel.
     Returns
     -------
     theta : xr.Dataset
@@ -259,7 +265,6 @@ def get_angle_complex_samples(
     else:
         # beam_type different for some channels, process each channel separately
         theta_list, phi_list, valid_dim_0_ids = [], [], []
-        dim_0 = get_dim_0(bs)
         for dim_0_id in bs[dim_0].data:
             dim_0 = list(bs.sizes.keys())[0]
             beam_type = ds_beam["beam_type"].sel({dim_0: dim_0_id})
