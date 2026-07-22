@@ -258,37 +258,37 @@ def get_angle_complex_samples(
         )
     else:
         # beam_type different for some channels, process each channel separately
-        theta_list, phi_list, valid_dim_0_values = [], [], []
+        theta_list, phi_list, valid_dim_0_ids = [], [], []
         dim_0 = get_dim_0(bs)
-        for ch_id in bs[dim_0].data:
+        for dim_0_id in bs[dim_0].data:
             dim_0 = list(bs.sizes.keys())[0]
-            beam_type = ds_beam["beam_type"].sel({dim_0: ch_id})
+            beam_type = ds_beam["beam_type"].sel({dim_0: dim_0_id})
             beam_type = int(beam_type)
             if beam_type not in SUPPORTED_BEAM_TYPES:
-                logger.warning(f"Skipping {dim_0} {ch_id}: unsupported beam_type {beam_type}")
+                logger.warning(f"Skipping {dim_0} {dim_0_id}: unsupported beam_type {beam_type}")
                 continue
 
             theta_ch, phi_ch = _compute_angle_from_complex(
-                bs=bs.sel({dim_0: ch_id}),
+                bs=bs.sel({dim_0: dim_0_id}),
                 beam_type=beam_type,
                 sens=[
-                    angle_params["angle_sensitivity_alongship"].sel({dim_0: ch_id}),
-                    angle_params["angle_sensitivity_athwartship"].sel({dim_0: ch_id}),
+                    angle_params["angle_sensitivity_alongship"].sel({dim_0: dim_0_id}),
+                    angle_params["angle_sensitivity_athwartship"].sel({dim_0: dim_0_id}),
                 ],
                 offset=[
-                    angle_params["angle_offset_alongship"].sel({dim_0: ch_id}),
-                    angle_params["angle_offset_athwartship"].sel({dim_0: ch_id}),
+                    angle_params["angle_offset_alongship"].sel({dim_0: dim_0_id}),
+                    angle_params["angle_offset_athwartship"].sel({dim_0: dim_0_id}),
                 ],
             )
             theta_list.append(theta_ch)
             phi_list.append(phi_ch)
-            valid_dim_0_values.append(ch_id)
+            valid_dim_0_ids.append(dim_0_id)
 
         # Combine angles from all channels
         theta = xr.DataArray(
             data=theta_list,
             coords={
-                dim_0: valid_dim_0_values,
+                dim_0: valid_dim_0_ids,
                 "ping_time": bs["ping_time"],
                 "range_sample": bs["range_sample"],
             },
@@ -296,7 +296,7 @@ def get_angle_complex_samples(
         phi = xr.DataArray(
             data=phi_list,
             coords={
-                dim_0: valid_dim_0_values,
+                dim_0: valid_dim_0_ids,
                 "ping_time": bs["ping_time"],
                 "range_sample": bs["range_sample"],
             },
