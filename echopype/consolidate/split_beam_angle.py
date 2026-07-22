@@ -29,6 +29,31 @@ SUPPORTED_BEAM_TYPES = [
     BEAM_TYPE_SPLIT_VARIANT_81,
 ]
 
+SUPPORTED_DIM_0_NAMES = ["channel", "frequency_nominal"]
+
+
+def get_dim_0(ds: xr.Dataset) -> str:
+    """
+    Get the name of the first dimension of the dataset.
+
+    Parameters
+    ----------
+    ds : xr.Dataset
+        The input dataset.
+
+    Returns
+    -------
+    str
+        The name of the first dimension.
+    """
+    dim_0 = list(ds.dims)[0]
+    if dim_0 in SUPPORTED_DIM_0_NAMES:
+        return dim_0
+    else:
+        raise ValueError(
+            f"The first dimension of the dataset must be one of {SUPPORTED_DIM_0_NAMES}."
+        )
+
 
 def _compute_angle_from_complex(
     bs: xr.DataArray, beam_type: int, sens: List[xr.DataArray], offset: List[xr.DataArray]
@@ -233,35 +258,37 @@ def get_angle_complex_samples(
         )
     else:
         # beam_type different for some channels, process each channel separately
-        theta_list, phi_list, valid_channels = [], [], []
-        for ch_id in bs["channel"].data:
-            beam_type = ds_beam["beam_type"].sel(channel=ch_id)
+        theta_list, phi_list, valid_dim_0_values = [], [], []
+        dim_0 = get_dim_0(bs)
+        for ch_id in bs[dim_0].data:
+            dim_0 = list(bs.sizes.keys())[0]
+            beam_type = ds_beam["beam_type"].sel({dim_0: ch_id})
             beam_type = int(beam_type)
             if beam_type not in SUPPORTED_BEAM_TYPES:
-                logger.warning(f"Skipping channel {ch_id}: unsupported beam_type {beam_type}")
+                logger.warning(f"Skipping {dim_0} {ch_id}: unsupported beam_type {beam_type}")
                 continue
 
             theta_ch, phi_ch = _compute_angle_from_complex(
-                bs=bs.sel(channel=ch_id),
+                bs=bs.sel({dim_0: ch_id}),
                 beam_type=beam_type,
                 sens=[
-                    angle_params["angle_sensitivity_alongship"].sel(channel=ch_id),
-                    angle_params["angle_sensitivity_athwartship"].sel(channel=ch_id),
+                    angle_params["angle_sensitivity_alongship"].sel({dim_0: ch_id}),
+                    angle_params["angle_sensitivity_athwartship"].sel({dim_0: ch_id}),
                 ],
                 offset=[
-                    angle_params["angle_offset_alongship"].sel(channel=ch_id),
-                    angle_params["angle_offset_athwartship"].sel(channel=ch_id),
+                    angle_params["angle_offset_alongship"].sel({dim_0: ch_id}),
+                    angle_params["angle_offset_athwartship"].sel({dim_0: ch_id}),
                 ],
             )
             theta_list.append(theta_ch)
             phi_list.append(phi_ch)
-            valid_channels.append(ch_id)
+            valid_dim_0_values.append(ch_id)
 
         # Combine angles from all channels
         theta = xr.DataArray(
             data=theta_list,
             coords={
-                "channel": valid_channels,
+                dim_0: valid_dim_0_values,
                 "ping_time": bs["ping_time"],
                 "range_sample": bs["range_sample"],
             },
@@ -269,7 +296,7 @@ def get_angle_complex_samples(
         phi = xr.DataArray(
             data=phi_list,
             coords={
-                "channel": valid_channels,
+                dim_0: valid_dim_0_values,
                 "ping_time": bs["ping_time"],
                 "range_sample": bs["range_sample"],
             },
