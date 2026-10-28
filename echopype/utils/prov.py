@@ -177,7 +177,9 @@ PROCESSING_LEVELS = dict(
 )
 
 
-def add_processing_level(processing_level_code: str, is_echodata: bool = False) -> Any:
+def add_processing_level(
+    processing_level_code: str, is_echodata: bool = False, require_valid_location: bool = False
+) -> Any:
     """
     Wraps functions or methods that return either an xr.Dataset or an echodata object
 
@@ -189,6 +191,10 @@ def add_processing_level(processing_level_code: str, is_echodata: bool = False) 
         the wildcard value of the input is propagated to the output.
     is_echodata : bool
         Flag specifying if the decorated function returns an EchoData object (optional)
+    require_valid_location : bool, default True
+        Whether the wrapped operation requires valid latitude/longitude before
+        processing-level attributes are attached. Currently set to `True` for
+        `consolidate.add_location` and set to `False` for `consolidate.add_depth`.
 
     Returns
     -------
@@ -291,10 +297,11 @@ def add_processing_level(processing_level_code: str, is_echodata: bool = False) 
                             )
 
                         ds = ds.assign_attrs(_attrs_dict(processing_level))
-                    else:
-                        print(
+                    elif require_valid_location:
+                        warnings.warn(
                             "xarray Dataset does not contain valid location data. "
-                            "Processing level attributes will not be added."
+                            "Processing level attributes will not be added.",
+                            UserWarning,
                         )
                         if "input_processing_level" in ds.attrs:
                             del ds.attrs["input_processing_level"]

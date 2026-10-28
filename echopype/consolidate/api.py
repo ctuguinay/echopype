@@ -63,7 +63,7 @@ def swap_dims_channel_frequency(ds: Union[xr.Dataset, str, pathlib.Path]) -> xr.
         )
 
 
-@add_processing_level("L2A")
+@add_processing_level("L2A", require_valid_location=False)
 def add_depth(
     ds: Union[xr.Dataset, str, pathlib.Path],
     echodata: Optional[Union[EchoData, str, pathlib.Path]] = None,
@@ -242,7 +242,7 @@ def add_depth(
     return ds
 
 
-@add_processing_level("L2A")
+@add_processing_level("L2A", require_valid_location=True)
 def add_location(
     ds: Union[xr.Dataset, str, pathlib.Path],
     echodata: Union[EchoData, str, pathlib.Path],
