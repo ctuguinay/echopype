@@ -298,9 +298,10 @@ def add_processing_level(
 
                         ds = ds.assign_attrs(_attrs_dict(processing_level))
                     elif require_valid_location:
-                        print(
+                        warnings.warn(
                             "xarray Dataset does not contain valid location data. "
-                            "Processing level attributes will not be added."
+                            "Processing level attributes will not be added.",
+                            UserWarning,
                         )
                         if "input_processing_level" in ds.attrs:
                             del ds.attrs["input_processing_level"]

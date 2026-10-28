@@ -315,15 +315,17 @@ def test_add_depth_tilt_depth_use_arg_logger_warnings(recwarn, ek80_path):
 
 
 @pytest.mark.unit
-def test_add_depth_without_location_does_not_warn(capsys):
+def test_add_depth_without_location_does_not_warn(recorded_warnings):
     """Depth calculation should not require location metadata to be present."""
     channel = ["channel_0", "channel_1"]
     range_sample = np.arange(2)
     ping_time = pd.date_range(start="2022-08-10T10:00:00", end="2022-08-10T12:00:00", periods=2)
     ds_Sv = _build_ds_Sv(channel, range_sample, ping_time, sample_interval=0.01)
     ep.consolidate.add_depth(ds_Sv, depth_offset=10)
-    captured = capsys.readouterr()
-    assert "does not contain valid location data" not in captured.out
+    assert not any(
+        "does not contain valid location data" in str(recorded_warning.message)
+        for recorded_warning in recorded_warnings
+    )
 
 
 @pytest.mark.integration
