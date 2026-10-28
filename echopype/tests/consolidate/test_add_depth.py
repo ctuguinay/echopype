@@ -315,7 +315,7 @@ def test_add_depth_tilt_depth_use_arg_logger_warnings(recwarn, ek80_path):
 
 
 @pytest.mark.unit
-def test_add_depth_without_location_does_not_warn(recorded_warnings):
+def test_add_depth_without_location_does_not_warn(recwarn):
     """Depth calculation should not require location metadata to be present."""
     channel = ["channel_0", "channel_1"]
     range_sample = np.arange(2)
@@ -324,7 +324,7 @@ def test_add_depth_without_location_does_not_warn(recorded_warnings):
     ep.consolidate.add_depth(ds_Sv, depth_offset=10)
     assert not any(
         "does not contain valid location data" in str(recorded_warning.message)
-        for recorded_warning in recorded_warnings
+        for recorded_warning in recwarn
     )
 
 
