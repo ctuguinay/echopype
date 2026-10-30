@@ -328,7 +328,6 @@ class TestEchoData:
         zarr_path = Path("test.zarr")
         mock_echodata.to_zarr(str(zarr_path), overwrite=True, consolidated=True)
         metadata_path = zarr_path / "zarr.json"
-        assert metadata_path.exists()
         with open(metadata_path) as file:
             consolidated_metadata_json = json.load(file)
         consolidated_metadata_dict = consolidated_metadata_json.get(
@@ -336,11 +335,7 @@ class TestEchoData:
         ).get("metadata", {})
         file_groups = []
         for key, value in consolidated_metadata_dict.items():
-            if (
-                isinstance(value, dict) and \
-                value.get("node_type") == "group" and \
-                "consolidated_metadata" in value.keys()
-            ):
+            if "consolidated_metadata" in value.keys():
                 file_groups.append(key)
 
         # check that all group metadata is in the consolidated metadata dictionary
