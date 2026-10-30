@@ -81,12 +81,7 @@ def save_file(ds, path, mode, engine, group=None, compression_settings=None, **k
                 ds[var] = ds[var].chunk(enc.get("dask_formatted_chunks", {}))
                 # # Remove dask_formatted_chunks from encoding
                 encoding[var].pop("dask_formatted_chunks")
-        # Set consolidated to False to avoid warning about consolidated metadata not being supported
-        # by Zarr 3
-        # TODO remove consolidated=False when Zarr 3 supports consolidated metadata
-        ds.to_zarr(
-            store=path.root, mode=mode, group=group, consolidated=False, encoding=encoding, **kwargs
-        )
+        ds.to_zarr(store=path.root, mode=mode, group=group, encoding=encoding, **kwargs)
     else:
         raise ValueError(f"{engine} is not a supported save format")
 
