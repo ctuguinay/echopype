@@ -343,8 +343,7 @@ class TestEchoData:
             ):
                 file_groups.append(key)
 
-        # check that all group metadata is in the consolidated metadata dictionary and
-        # that each group's metadata is within the 
+        # check that all group metadata is in the consolidated metadata dictionary
         expected_groups = [
             "Environment",
             "Platform",
