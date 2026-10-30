@@ -324,23 +324,27 @@ class TestEchoData:
         Test that echodata to_zarr export includes consolidated metadata and check
         that all groups exist.
         """
+        # get consolidated metadata dictionary
         zarr_path = Path("test.zarr")
         mock_echodata.to_zarr(str(zarr_path), overwrite=True, consolidated=True)
         metadata_path = zarr_path / "zarr.json"
         assert metadata_path.exists()
         with open(metadata_path) as file:
             consolidated_metadata_json = json.load(file)
-
-        # get nested metadata dictionary
         consolidated_metadata_dict = consolidated_metadata_json.get(
             "consolidated_metadata", {}
         ).get("metadata", {})
         file_groups = []
         for key, value in consolidated_metadata_dict.items():
-            if isinstance(value, dict) and value.get("node_type") == "group":
+            if (
+                isinstance(value, dict) and \
+                value.get("node_type") == "group" and \
+                "consolidated_metadata" in value.keys()
+            ):
                 file_groups.append(key)
 
-        # check that all groups exists in the nested metadata dictionary
+        # check that all group metadata is in the consolidated metadata dictionary and
+        # that each group's metadata is within the 
         expected_groups = [
             "Environment",
             "Platform",
@@ -350,8 +354,8 @@ class TestEchoData:
             "Sonar/Beam_group1",
             "Vendor_specific",
         ]
-        for group in expected_groups:
-            assert group in file_groups, f"{group} not found in consolidated metadata!"
+        for expected_group in expected_groups:
+            assert expected_group in file_groups
 
         # clean up the zarr file
         shutil.rmtree(zarr_path)
