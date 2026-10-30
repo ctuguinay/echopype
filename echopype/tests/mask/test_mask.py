@@ -175,6 +175,7 @@ def get_mock_source_ds_apply_mask(n: int, n_chan: int, is_delayed: bool) -> xr.D
 
     # create mock Dataset
     mock_ds = xr.Dataset(data_vars={"var1": mock_var1_da, "var2": mock_var2_da})
+    mock_ds.attrs["input_processing_level"] = "Level 2B"
 
     return mock_ds
 
