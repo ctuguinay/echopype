@@ -1,6 +1,7 @@
 from textwrap import dedent
 
 import os
+import json
 import fsspec
 from pathlib import Path
 import shutil
@@ -18,7 +19,7 @@ import pytest
 import xarray as xr
 import numpy as np
 
-from utils import get_mock_echodata, check_consolidated  # noqa: F401
+from utils import get_mock_echodata
 
 @pytest.fixture
 def ek60_path(test_path):
@@ -318,16 +319,42 @@ class TestEchoData:
         assert result is None
         assert isinstance(ed_result, xr.Dataset)
 
-    def test_to_zarr_created(self, mock_echodata):
+    def test_consolidated_to_zarr(self, mock_echodata):
         """
-        Tests to_zarr creation. Currently, this test uses a mock EchoData object that only
-        has attributes.
+        Test that echodata to_zarr export includes consolidated metadata and check
+        that all groups exist.
+
+        TODO Check for the exact values here once consolidated metadata is no longer
+        experimental for Zarr v3.
         """
         zarr_path = Path("test.zarr")
-        mock_echodata.to_zarr(str(zarr_path), overwrite=True)
-        json_path = zarr_path / "zarr.json"
+        mock_echodata.to_zarr(str(zarr_path), overwrite=True, consolidated=True)
+        metadata_path = zarr_path / "zarr.json"
+        assert metadata_path.exists()
+        with open(metadata_path) as file:
+            consolidated_metadata_json = json.load(file)
 
-        assert json_path.exists()
+        # get nested metadata dictionary
+        consolidated_metadata_dict = consolidated_metadata_json.get(
+            "consolidated_metadata", {}
+        ).get("metadata", {})
+        file_groups = []
+        for key, value in consolidated_metadata_dict.items():
+            if isinstance(value, dict) and value.get("node_type") == "group":
+                file_groups.append(key)
+
+        # check that all groups exists in the nested metadata dictionary
+        expected_groups = [
+            "Environment",
+            "Platform",
+            "Platform/NMEA",
+            "Provenance",
+            "Sonar",
+            "Sonar/Beam_group1",
+            "Vendor_specific",
+        ]
+        for group in expected_groups:
+            assert group in file_groups, f"{group} not found in consolidated metadata!"
 
         # clean up the zarr file
         shutil.rmtree(zarr_path)
