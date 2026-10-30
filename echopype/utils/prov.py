@@ -260,45 +260,34 @@ def add_processing_level(processing_level_code: str, is_echodata: bool = False) 
                     return dataobj
                 elif isinstance(dataobj, xr.Dataset):
                     ds = dataobj
-                    if _check_valid_latlon(ds):
-                        if processing_level_code in PROCESSING_LEVELS:
-                            # The decorator is passed the exact, final level code, with sublevel
-                            processing_level = PROCESSING_LEVELS[processing_level_code]
-                        elif (
-                            "*" in processing_level_code
-                            and "input_processing_level" in ds.attrs.keys()
-                        ):
-                            if processing_level_code[-1] == "*":
-                                # The decorator is passed a level code without sublevel (eg, L3*).
-                                # The decorated function's "input" dataset's sublevel (A or B) will
-                                # be propagated to the function's output dataset. For L2 and L3
-                                sublevel = ds.attrs["input_processing_level"][-1]
-                                level = processing_level_code[1]
-                            elif processing_level_code[1] == "*":
-                                # The decorator is passed a sublevel code without level (eg, L*A).
-                                # The decorated function's "input" dataset's level (2 or 3) will
-                                # be propagated to the function's output dataset. For L2 and L3
-                                sublevel = processing_level_code[-1]
-                                level = ds.attrs["input_processing_level"][-2]
+                    if processing_level_code in PROCESSING_LEVELS:
+                        # The decorator is passed the exact, final level code, with sublevel
+                        processing_level = PROCESSING_LEVELS[processing_level_code]
+                    elif (
+                        "*" in processing_level_code and "input_processing_level" in ds.attrs.keys()
+                    ):
+                        if processing_level_code[-1] == "*":
+                            # The decorator is passed a level code without sublevel (eg, L3*).
+                            # The decorated function's "input" dataset's sublevel (A or B) will
+                            # be propagated to the function's output dataset. For L2 and L3
+                            sublevel = ds.attrs["input_processing_level"][-1]
+                            level = processing_level_code[1]
+                        elif processing_level_code[1] == "*":
+                            # The decorator is passed a sublevel code without level (eg, L*A).
+                            # The decorated function's "input" dataset's level (2 or 3) will
+                            # be propagated to the function's output dataset. For L2 and L3
+                            sublevel = processing_level_code[-1]
+                            level = ds.attrs["input_processing_level"][-2]
 
-                            processing_level = PROCESSING_LEVELS[f"L{level}{sublevel}"]
-                            del ds.attrs["input_processing_level"]
-                        else:
-                            raise RuntimeError(
-                                "Processing level attributes (processing_level_code {processing_level_code}) "  # noqa
-                                f"cannot be added. Please ensure that {func.__qualname__} "
-                                "uses the function insert_input_processing_level."
-                            )
-
-                        ds = ds.assign_attrs(_attrs_dict(processing_level))
+                        processing_level = PROCESSING_LEVELS[f"L{level}{sublevel}"]
+                        del ds.attrs["input_processing_level"]
                     else:
-                        print(
-                            "xarray Dataset does not contain valid location data. "
-                            "Processing level attributes will not be added."
+                        raise RuntimeError(
+                            "Processing level attributes (processing_level_code {processing_level_code}) "  # noqa
+                            f"cannot be added. Please ensure that {func.__qualname__} "
+                            "uses the function insert_input_processing_level."
                         )
-                        if "input_processing_level" in ds.attrs:
-                            del ds.attrs["input_processing_level"]
-
+                    ds = ds.assign_attrs(_attrs_dict(processing_level))
                     return ds
                 else:
                     raise RuntimeError(
